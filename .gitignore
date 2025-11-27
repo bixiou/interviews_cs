@@ -1,0 +1,16 @@
+.Rproj.user
+.Rproj
+.Rhistory
+*.RData
+.Ruserdata
+*.RDataTmp
+*.RDataTmp1
+*.RDataTmp2
+*qualtrics_credential.R
+*.Renviron
+*IDs*.csv
+Adrien's/*
+*openai_key.txt
+papers/build/*
+*/build/*
+*.bib
