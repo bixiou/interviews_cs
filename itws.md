@@ -1,11 +1,22 @@
 ## Tasks
-- find emails for pilot
-- send invites for pilot
 - read literature: qualitative research on issue salience, climate attitudes, global redistribution; AI interviews
-- try new CNRS tools
-- find tools: invite => meeting booking => send link => record => code
 - prepare timeline of pilot interviews
+
+## Tasks Sonja
+- draft email invites
+- find meeting booking tool
+- find literature
+
+## Tasks Adrien
+- find emails for pilot
+- try new CNRS tools
+- Zotero library
+- find tools: invite => meeting booking => send link => record => code
 - check how payment can work administratively
+
+
+## Sonja
+- CNRS email?
 
 ## Email
 Nous informerons les répondants du sujet de la recherche, de ses méthodes, des coordonnées et institutions des chercheurs impliqués, de l’utilisation des données, et des modalités d’analyse et de diffusion des résultats du projet. Notre courriel présentera une version succincte des conditions de l’enquête, tandis qu’une pièce jointe présentera une version complète.
