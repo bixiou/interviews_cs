@@ -7,6 +7,7 @@ emails_US <- names_US %>% rename(fname = name, fn = n) %>% inner_join(surnames_U
   mutate(email = paste0(tolower(name), ".", tolower(surname), "@", domain), freq = n.x * n.y * n/270e6) %>% arrange(desc(freq)) %>% dplyr::select(email, freq)
 emails_US$freq <- round(emails_US$freq)
 write.csv(emails_US[1:1e5,], "../data_ext/common_emails_US.csv", quote = F, row.names = F) 
+rm(emails_US)
 # freq is the expected number of such combinations in the U.S. adult population (divided by the market share of the domain, it gives the expected number of Surname Name in the adult pop)
 # When >2% of emails hard bounce (email doesn't exist), reputation is lowered, more emails placed as spam, eventually IP or sender is blocked. Plus, there are spam-traps: one hit and user is blocked.
 # Using kickbox.com, turns out 42% of emails around rank 100k (freq=81) are invalid; 43% at 30k (200); 20% around 10k (404); 23% at 2k (947).
