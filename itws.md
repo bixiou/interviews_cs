@@ -12,13 +12,11 @@
 - try new CNRS tools
 - Zotero library
 - find tools: invite => meeting booking => send link => record => code
-- check how payment can work administratively
-
-
-## Sonja
-- CNRS email?
+- check how payment can work administratively: OK, 3333€ HT par bon de commande, passer par Smash (or if not, GRA).
 
 ## Email
+Respondents who left their email:
+FR-GB-US: 1007; FR: 80; US: 710; GB: 217; IT: 126; PL: 24; ES: 44; CH: 22 (incl. 3 FR, 3 IT).
 Nous informerons les répondants du sujet de la recherche, de ses méthodes, des coordonnées et institutions des chercheurs impliqués, de l’utilisation des données, et des modalités d’analyse et de diffusion des résultats du projet. Notre courriel présentera une version succincte des conditions de l’enquête, tandis qu’une pièce jointe présentera une version complète.
 Deux formulaires indépendants sont prévus pour l’utilisation des données personnelles : l’un concernant les données pseudonymisées nécessaires à l’enquête, l’autre concernant la diffusion optionnelle de l’enregistrement vidéo. 
 Dès publication d’un document de travail (pre-print) issu de notre projet de recherche, nous enverrons celui-ci par courriel aux répondants qui ont consenti à recevoir de tels courriels.
