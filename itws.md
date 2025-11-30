@@ -26,3 +26,25 @@ Nous demanderons explicitement aux répondants des suggestions sur notre problé
 
 ## Admin
 - We can pay up to 3333€ HT par bon de commande, going through Smash (or if not, GRA).
+
+## Video
+1. Is Visio the most suitable tool for our needs?
+2. Is it possible to reuse the same URL every time?
+3. Is it possible to record audio only (without video)?
+4. Is it possible to have a transcript at the same time as the recording?
+5. Is it possible to start recording and transcribing as soon as someone connects to the video conference?
+6. Does transcription work as well in English as it does in French? What model is it based on?
+7. Can recordings and transcripts be stored directly on a government server?
+8. Is it possible to organize polls in Visio?
+
+                        Visio   Zoom    Meet    Jitsi
+Free                    V       max 40' ~       V
+Record                  V       V       10€/m   V
+Re-use URL              v       v       v       v
+Polls                   X       X       ?       v
+Record only audio       x       v       ?       x
+Transcript + record     x       ?       10€/m   x
+Record automatically    x       ?       ?       x
+Store records cloud     x       v       ?       x
+Transcription model             
+Subtitles               x       x       V       x
