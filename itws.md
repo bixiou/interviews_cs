@@ -40,11 +40,13 @@ Nous demanderons explicitement aux répondants des suggestions sur notre problé
                         Visio   Zoom    Meet    Jitsi
 Free                    V       max 40' ~       V
 Record                  V       V       10€/m   V
-Re-use URL              v       v       v       v
+Re-use URL              V       v       v       v
 Polls                   X       X       ?       v
-Record only audio       x       v       ?       x
-Transcript + record     x       ?       10€/m   x
-Record automatically    x       ?       ?       x
-Store records cloud     x       v       ?       x
-Transcription model             
+Record only audio       soon    v       ?       x
+Transcript + record     soon    ?       10€/m   x
+Record automatically    X       ?       ?       x
+Store records cloud     soon    v       ?       x
+Transcription model     Whisper     
 Subtitles               x       x       V       x
+
+=> We'll use Jitsi and do some steps manually (removing images from video, transcribing, storing). 
