@@ -57,7 +57,7 @@ Subtitles               x       x       V       x
 - Are you satisfied with your purchasing power? [If not enough:] If you had 1000$ per month of extra income, what would you do with it?
 - How much do you need to live well? How much do people need? How much do you deserve?
 - When you hear about hunger, what do you think?
-- What do you think about immigration?
+- What do you think about immigration? Why is immigration important to you?
 - How do you make your voting decision? Did you vote in the last election? [Yes:] For whom? Why did you vote for her/him? Why don't you like about (other candidate)? [No:] Why didn't you vote? What do you think of party A? B? C?
 - What things do you consider when voting?
 - Which parties could you see yourself voting for?
