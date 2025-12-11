@@ -51,6 +51,20 @@ Subtitles               x       x       V       x
 
 => We'll use Jitsi and do some steps manually (removing images from video, transcribing, storing). 
 
+## Agenda
+- Google: allows booking and automatic emails after booking for free; syncing severak agendas, personalizing the emails and sending reminders costs 10€/m https://calendar.app.google/qEpJFzaqRfqCp5wP7
+- Calendly: allows all we need for 16€/m, contact need to be added one by one unless (?) it is connected to mailchimp
+- Zapier: connect Mailchimp, Google, Caldenly, and more... 26€/m
+- Doodle: not sure does what we need, 84€/year
+
+## Emailing
+- Brevo: free for up to 300 mails/day, includes Brevo logo, automate booking or reminders, can be integrated with Google Agenda https://www.brevo.com/pricing/see-all-features/
+- Sender: free for up to 2,500 contacts, no integration with booking https://www.sender.net/pricing/
+- Mailjet: free for up to 6,000 mails/month https://www.mailjet.com/pricing/, automation for 27€/m
+- Mailchimp: 26€/m
+
+=> We can use Brevo, with or without Google Agenda
+
 ## Questions ideas
 - Could your consumption be generalized to the whole world? => doesn't work for the poor
 - Do you feel that you have contributed more to society or received more from it?
