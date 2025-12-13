@@ -3,14 +3,12 @@
 - prepare timeline of pilot interviews
 
 ## Tasks Sonja
-- draft email invites
-- find meeting booking tool
-- find literature
+- draft email invites using Brevo
+- draft notice, forms
+- find literature on voting marketing research
 
 ## Tasks Adrien
 - find GB emails for pilot: Prolific?
-- Zotero library
-- try new CNRS tools
 - find tools: invite => meeting booking => send link => record => code
 
 ## Email
