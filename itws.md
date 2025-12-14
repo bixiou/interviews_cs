@@ -73,3 +73,4 @@ Subtitles               x       x       V       x
 - How do you make your voting decision? Did you vote in the last election? [Yes:] For whom? Why did you vote for her/him? Why don't you like about (other candidate)? [No:] Why didn't you vote? What do you think of party A? B? C?
 - What things do you consider when voting?
 - Which parties could you see yourself voting for?
+- Do you agree: "The Treasury must act more assertively in international financial institutions to protect and advance U.S. national interests—and oppose those that do not." (Project 2025)
