@@ -63,6 +63,10 @@ Subtitles               x       x       V       x
 
 => We can use Brevo, with or without Google Agenda
 
+On Bilendi, respondents are paid ~ €3/hour
+
+cf. Grafström & Schelin (2014), Chen et al. (16), Perez Salamero to select representative subsample
+
 ## Questions ideas
 - Could your consumption be generalized to the whole world? => doesn't work for the poor
 - Do you feel that you have contributed more to society or received more from it?
