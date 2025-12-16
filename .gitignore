@@ -14,3 +14,4 @@ Adrien's/*
 papers/build/*
 */build/*
 *.bib
+/hidden/*

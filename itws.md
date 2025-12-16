@@ -78,3 +78,6 @@ cf. Grafström & Schelin (2014), Chen et al. (16), Perez Salamero to select repr
 - What things do you consider when voting?
 - Which parties could you see yourself voting for?
 - Do you agree: "The Treasury must act more assertively in international financial institutions to protect and advance U.S. national interests—and oppose those that do not." (Project 2025)
+
+## Hypotheses
+ The typical survey operates under the conceit that people have direct access to their own sentiments and attitudes, that such sentiments and attitudes can be surgically elicited by simply inquiring about them, and that people are willing to freely share such sentiments even when they can access them. The AVP may be used to assess whether sentiments and attitudes are sometimes better elicited indirectly in everyday conversations conducted in an atmosphere of trust (thereby exposing, for example, “shy voters” and socially unacceptable sentiments). 
