@@ -1,30 +1,30 @@
-#' library(utils)
-#' chooseCRANmirror(ind = 1)
-#' .libPaths(c("C:/Users/fabre/AppData/Local/R/win-library/4.4", "C:/Program Files/R/R-4.4.3/library", "C:/Users/fabre/AppData/Local/R/win-library/4.3", "C:/Program Files/R/R-4.3.1/library"))
-#' 
-#' # options(download.file.method = "wget"); # For Ubuntu 14.04
-#' package <- function(p, version = NULL, remove = FALSE, github = '') {
-#'   if (remove) {
-#'     detach(paste0("package:", p), unload = T)
-#'     remove.packages(p)
-#'   }
-#'   if (!is.element(p, installed.packages()[,1])) {
-#'     if (missing(version)) {
-#'       if (github != '') {
-#'         package("devtools")
-#'         install_github(paste0(github, '/', p))
-#'       } else install.packages(p) # , repos='https://cran.rstudio.com/', type = 'source' may help in case of bug
-#'     } else {
-#'       try({detach("package:devtools", unload = T)})
-#'       package("remotes")
-#'       install_version(p, version = version, repos = "http://cran.us.r-project.org", upgrade = "never", dependencies = TRUE)
-#'       package("devtools")
-#'     }
-#'   }
-#'   else { if(!missing(version)) warning(paste("'", p, "' is already installed with a (potentially) newer version. You may want to install the required version (", version, ") to avoid bugs.", sep=""))}
-#'   library(p, character.only = TRUE)
-#' } # loads packages with automatical install if needed
-#' 
+library(utils)
+chooseCRANmirror(ind = 1)
+.libPaths(c("C:/Users/fabre/AppData/Local/R/win-library/4.4", "C:/Program Files/R/R-4.4.3/library", "C:/Users/fabre/AppData/Local/R/win-library/4.3", "C:/Program Files/R/R-4.3.1/library"))
+
+# options(download.file.method = "wget"); # For Ubuntu 14.04
+package <- function(p, version = NULL, remove = FALSE, github = '') {
+  if (remove) {
+    detach(paste0("package:", p), unload = T)
+    remove.packages(p)
+  }
+  if (!is.element(p, installed.packages()[,1])) {
+    if (missing(version)) {
+      if (github != '') {
+        package("devtools")
+        install_github(paste0(github, '/', p))
+      } else install.packages(p) # , repos='https://cran.rstudio.com/', type = 'source' may help in case of bug
+    } else {
+      try({detach("package:devtools", unload = T)})
+      package("remotes")
+      install_version(p, version = version, repos = "http://cran.us.r-project.org", upgrade = "never", dependencies = TRUE)
+      package("devtools")
+    }
+  }
+  else { if(!missing(version)) warning(paste("'", p, "' is already installed with a (potentially) newer version. You may want to install the required version (", version, ") to avoid bugs.", sep=""))}
+  library(p, character.only = TRUE)
+} # loads packages with automatical install if needed
+
 #' # package("stringr")
 #' # if (!is.element("iatgen", installed.packages()[,1])) {
 #' #   warning("/!\ Install iatgen manually from github!")
