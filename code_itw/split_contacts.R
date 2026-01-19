@@ -1,7 +1,9 @@
 package("BalancedSampling")
 package("Hmisc")
 
-# /!\ The subsample selected is random and not necessarily of size n (can be of lower size)
+package("sampling")
+
+# /!\ The subsample selected is random and not necessarily of size n (can be of lower size) => To get correct sample size, a dirty fix is to artificially increase n until expected result
 select_subsample <- function(n = 75, c = "US", weight_var = "weight_vote_gcs", interest_vars = c(), return = "sample", verbose = FALSE) {
   # vote (non-voters as PNR), vote_agg (hypothetical vote used for non-voters), voted, group_defended, employment_agg, millionaire_factor, share_solidarity_supported, share_solidarity_diff
   df <- readRDS(paste0("../hidden/", c, "_full.rds"))# This works well if anyone from the sample can be selected; doesn't work if only a subset is volunteer
@@ -21,19 +23,27 @@ select_subsample <- function(n = 75, c = "US", weight_var = "weight_vote_gcs", i
 }
 
 select_subsample(n = 75, c = "US", return = "export") # True: 49%
-select_subsample(n = 75, c = "GB", return = "export") # True: 58%
-temp <- select_subsample(n = 75, c = "FR", weight_var = "weight_gcs", return = "export") # True: 65%
+select_subsample(n = 87, c = "GB", return = "export") # True: 58%
+temp <- select_subsample(n = 5000, c = "FR", weight_var = "weight_gcs", return = "export") # True: 65%
 
 
 # Sandbox
 n <- 75 # 250 (based on 40% acceptance rate, 75 for 30 people and 250 for 100)
 c <- "FR"
+interest_vars <- c()
 interest_vars <- c("gcs_support", "latent_support_global_redistr") 
+interest_vars <- c("gcs_support", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_factor", "income_factor") 
 weight_var <- "weight_vote_gcs"
 
 df <- readRDS(paste0("../hidden/", c, "_full.rds"))
+select_subsample(n = 75, c = "FR", weight_var = "weight_gcs", interest_vars = c() , return = "export")
+length(cube(df$inclusion_weight, as.matrix(df[, c("inclusion_weight", interest_vars)])))
 wtd.mean(df$gcs_support, df$weight_vote_gcs) # 88%
 mean(df$gcs_support) # 80%
+# TODO! add gcs_understood to interest_vars
+
+sum(UPpivotal(df$inclusion_weight) >= 1)
+sum(df$inclusion_weight)
 
 # all_id <- read.csv("../Adrien's/all_id.csv")
 # all_id <- merge(all[,!names(all) %in% c("interview", "country")], all_id, by = "n")
