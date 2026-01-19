@@ -57,7 +57,7 @@ package <- function(p, version = NULL, remove = FALSE, github = '') {
 #' package("RColorBrewer") # used in barres
 #' package("corrplot") # heatmap #, github = 'taiyun')#, version = "0.88") # 0.92 installed: is that an issue?
 #' package("xfun") # required by Hmisc, knitr
-#' package("Hmisc") # describe, decrit
+package("Hmisc") # describe, decrit
 #' package("quanteda") # stopwords for wordcloud
 #' package("rpart.plot") # Regression trees
 #' package("memisc")
@@ -90,6 +90,7 @@ package <- function(p, version = NULL, remove = FALSE, github = '') {
 #' # package("weights") # wtd.t.test
 #' # package("stringr") # str_trim, parse_question
 #' # package("purrr") # %||%, parse_question
+package("BalancedSampling") # cube
 #' 
 #' #' package("plyr")
 #' # package("expss") # fre (for weighted frequency table)
