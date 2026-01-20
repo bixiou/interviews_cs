@@ -29,10 +29,10 @@ temp <- select_subsample(n = 5000, c = "FR", weight_var = "weight_gcs", return =
 
 # Sandbox
 n <- 75 # 250 (based on 40% acceptance rate, 75 for 30 people and 250 for 100)
-c <- "FR"
+c <- "GB"
 interest_vars <- c()
 interest_vars <- c("gcs_support", "latent_support_global_redistr") 
-interest_vars <- c("gcs_support", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_factor", "income_factor") 
+interest_vars <- c("gcs_support", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_factor", "income_factor") # other quota vars: urbanity region, education_quota instead (25-64)
 weight_var <- "weight_vote_gcs"
 
 df <- readRDS(paste0("../hidden/", c, "_full.rds"))
@@ -41,6 +41,7 @@ length(cube(df$inclusion_weight, as.matrix(df[, c("inclusion_weight", interest_v
 wtd.mean(df$gcs_support, df$weight_vote_gcs) # 88%
 mean(df$gcs_support) # 80%
 # TODO! add gcs_understood to interest_vars
+# TODO remove d(c) from global_tax_attitudes / update the quotas here
 
 sum(UPpivotal(df$inclusion_weight) >= 1)
 sum(df$inclusion_weight)
@@ -61,3 +62,4 @@ sum(df$inclusion_weight)
 #           paste0("../Adrien's/", c, "_full.rds"))
 # } 
 
+saveRDS(df[, !names(df) %in% "interview"], "../hidden/GB_anon.rds")
