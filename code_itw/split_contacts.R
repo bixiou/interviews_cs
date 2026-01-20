@@ -41,7 +41,6 @@ length(cube(df$inclusion_weight, as.matrix(df[, c("inclusion_weight", interest_v
 wtd.mean(df$gcs_support, df$weight_vote_gcs) # 88%
 mean(df$gcs_support) # 80%
 # TODO! add gcs_understood to interest_vars
-# TODO remove d(c) from global_tax_attitudes / update the quotas here
 
 sum(UPpivotal(df$inclusion_weight) >= 1)
 sum(df$inclusion_weight)
