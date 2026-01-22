@@ -1,17 +1,22 @@
 # package("BalancedSampling")
 package("Hmisc")
+package("tidyverse")
 package("sampling")
+# TODO nested subsamples so that the most representative subsamples come first
 
-interest_vars <- c("gcs_support", "gcs_understood", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_quota", "income_factor", "region_factor", "urbanity_factor") 
+interest_vars <- c("gcs_support", "gcs_understood", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_quota_factor", "income_factor", "region_factor", "urbanity_factor") 
 
-# /!\ The subsample selected is random and not necessarily of size n (can be of lower size) => To get correct sample size, a dirty fix is to artificially increase n until expected result
+# Cf. https://stats.stackexchange.com/questions/469563/how-to-partition-a-sample-into-representative-subsamples
 select_subsample <- function(n = 200, c = "US", weight_var = "weight_all_gcs", auxiliary_vars = interest_vars, return = "sample", verbose = FALSE) {
   set.seed(0)
   # vote (non-voters as PNR), vote_agg (hypothetical vote used for non-voters), voted, group_defended, employment_agg, millionaire_factor, share_solidarity_supported, share_solidarity_diff
   df <- readRDS(paste0("../hidden/", c, "_full.rds"))# This works well if anyone from the sample can be selected; doesn't work if only a subset is volunteer
   df$inclusion_weight <- inclusionprobabilities(df[[weight_var]], n) 
-  balancing_matrix <- model.matrix(~ . -1, data = df[, c("inclusion_weight", intersect(names(df), auxiliary_vars))])
-  selected_subsample <- samplecube(balancing_matrix, df$inclusion_weight, order = 2, method = 2, comment = verbose) == 1
+  # balancing_matrix <- model.matrix(~ . -1, data = df[, c("inclusion_weight", intersect(names(df), auxiliary_vars))])
+  # selected_subsample <- samplecube(balancing_matrix, df$inclusion_weight, order = 2, method = 2, comment = verbose) == 1
+  balancing_matrix <- model.matrix(~ ., data = df[, c(intersect(auxiliary_vars, names(df)))])
+  selected_subsample <- samplecube(df$inclusion_weight * balancing_matrix, df$inclusion_weight, order = 2, method = 2, comment = verbose) == 1
+  # Alternative with BalancedSampling package:
   # df$inclusion_weight <- getPips(df[[weight_var]], n) # df[[weight_var]] * n/sum(df[[weight_var]])  
   # selected_subsample <- cube(df$inclusion_weight, df[, c("inclusion_weight", auxiliary_vars)])
   
@@ -19,7 +24,10 @@ select_subsample <- function(n = 200, c = "US", weight_var = "weight_all_gcs", a
   if (verbose | (return == "representativeness")) print(round(colMeans(balancing_matrix[selected_subsample, ]), 2))
   if (return == "sample") return(df[selected_subsample,])
   else if (return == "export") {
-    write.csv2(df[selected_subsample,], paste0("../hidden/subsample_", c, "_", n, ".csv"))
+    # write.csv2(df[selected_subsample,], paste0("../hidden/subsample_", c, "_", n, ".csv"))
+    write.table(df[selected_subsample,] %>% mutate(across(where(is.character), ~ str_replace_all(.x, "[\r\n]", "\\\\n"))) %>% mutate(across(where(is.character), ~ str_replace_all(.x, ";", ","))), 
+                paste0("../hidden/subsample_", c, "_", n, ".csv"), quote = F, row.names = F, sep = ";", dec = ".")
+    
     print(round(colMeans(balancing_matrix[selected_subsample, ]), 2))
     if (verbose) return(selected_subsample)
   }
@@ -31,10 +39,12 @@ select_subsample <- function(n = 200, c = "US", weight_var = "weight_all_gcs", a
 }
 
 for (c in c("US", "GB", "FR")) select_subsample(n = 20, c = c, return = "export")
-for (c in c("US", "GB", "FR")) select_subsample(n = 200, c = c, return = "export")
-for (c in c("US", "GB", "FR")) select_subsample(n = 75, c = c, return = "export")
+for (c in c("US", "GB")) select_subsample(n = 200, c = c, return = "export")
+for (c in c("US", "GB")) select_subsample(n = 100, c = c, return = "export")
+select_subsample(n = 75, c = "FR", return = "export")
+select_subsample(n = 50, c = "FR", return = "export")
 for (c in c("US", "GB", "FR")) select_subsample(n = 20, c = c, return = "representativeness")
-
+select_subsample(n = 100, c = "US", return = "export")
 
 # Sandbox
 n <- 75 # 250 (based on 40% acceptance rate, 75 for 30 people and 250 for 100)
@@ -55,18 +65,27 @@ mean(df$gcs_support) # 80%
 # all_id <- read.csv("../Adrien's/all_id.csv")
 # all_id <- merge(all[,!names(all) %in% c("interview", "country")], all_id, by = "n")
 # all_id$volunteer <- grepl("@", all_id$interview)
-# for (c in c("IT", "US", "GB", "FR", "PL")) {
+# variables_export <- c("n", variables_sociodemos, "zipcode", "income_decile", "uc", "country", "vote_original", "vote", "voted", "vote_agg", "group_defended", "gcs_support", "gcs_understood", "field", "latent_support_global_redistr", 
+#                       "share_solidarity_diff", "share_solidarity_supported", "interview", "volunteer", "weight", "weight_vote", "weight_vote_gcs", "weight_gcs", "weight_vote_gcs", "weight_vote_gcs_simple", "weight_all_gcs")
+# write.table(all_id[all_id$country %in% c("IT", "US", "GB", "FR") & all_id$volunteer, names(all_id) %in% variables_export] %>%
+#               mutate(across(where(is.character), ~ str_replace_all(.x, "[\r\n]", "\\\\n"))) %>% mutate(across(where(is.character), ~ str_replace_all(.x, ";", ","))), "../Adrien's/id.csv", quote = F, row.names = F, sep = ";", dec = ".")
+# saveRDS(all_id[all_id$country %in% c("IT", "US", "GB", "FR") & all_id$volunteer, names(all_id) %in% variables_export], "../Adrien's/id.rds")
+# for (c in c("IT", "US", "GB", "FR")) {
+#   print(c)
 #   temp <- wtd.mean(d(c)$gcs_support, d(c)$weight)
 #   pop_freq[[c]]$gcs_support <- c(temp/100, 1-temp/100)
+#   temp <- wtd.mean(d(c)$gcs_understood, d(c)$weight)
+#   pop_freq[[c]]$gcs_understood <- c(temp, 1-temp)
 #   temp <- all_id[all_id$country == c & all_id$volunteer,]
 #   temp$weight <- weighting(temp, c, trim = FALSE)
 #   temp$weight_gcs <- weighting(temp, c, variant = "gcs", trim = FALSE)
 #   temp$weight_vote <- weighting(temp, c, variant = "vote", trim = FALSE)
 #   temp$weight_vote_gcs <- weighting(temp, c, variant = "vote_gcs", trim = FALSE)
-#   saveRDS(temp[, names(temp) %in% c("n", variables_sociodemos, "country", "vote_original", "vote", "vote_agg", "voted", "group_defended", "gcs_support", "latent_support_global_redistr", 
-#                                     "share_solidarity_diff", "share_solidarity_supported", "interview", "volunteer", "weight", "weight_vote", "weight_gcs", "weight_vote_gcs")], 
-#           paste0("../Adrien's/", c, "_full.rds"))
+#   temp$weight_all_gcs <- weighting(temp, c, variant = "all_gcs", trim = FALSE)
+#   # temp$weight_vote_gcs_simple <- weighting(temp, c, variant = "vote_gcs_simple", trim = FALSE)
+#   saveRDS(temp[, names(temp) %in% variables_export], paste0("../Adrien's/", c, "_full.rds"))
 # } 
+# rm(all_id)
 
 # saveRDS(df[, !names(df) %in% "interview"], "../hidden/GB_anon.rds")
 
