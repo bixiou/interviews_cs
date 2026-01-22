@@ -1,30 +1,39 @@
-package("BalancedSampling")
+# package("BalancedSampling")
 package("Hmisc")
-
 package("sampling")
 
+interest_vars <- c("gcs_support", "gcs_understood", "latent_support_global_redistr", "man", "age_factor", "vote_factor", "education_quota", "income_factor", "region_factor", "urbanity_factor") 
+
 # /!\ The subsample selected is random and not necessarily of size n (can be of lower size) => To get correct sample size, a dirty fix is to artificially increase n until expected result
-select_subsample <- function(n = 75, c = "US", weight_var = "weight_vote_gcs", interest_vars = c(), return = "sample", verbose = FALSE) {
+select_subsample <- function(n = 200, c = "US", weight_var = "weight_all_gcs", auxiliary_vars = interest_vars, return = "sample", verbose = FALSE) {
+  set.seed(0)
   # vote (non-voters as PNR), vote_agg (hypothetical vote used for non-voters), voted, group_defended, employment_agg, millionaire_factor, share_solidarity_supported, share_solidarity_diff
   df <- readRDS(paste0("../hidden/", c, "_full.rds"))# This works well if anyone from the sample can be selected; doesn't work if only a subset is volunteer
-  df$inclusion_weight <- df[[weight_var]] * n/sum(df[[weight_var]])  
-  selected_subsample <- cube(df$inclusion_weight, df[, c("inclusion_weight", interest_vars)])
+  df$inclusion_weight <- inclusionprobabilities(df[[weight_var]], n) 
+  balancing_matrix <- model.matrix(~ . -1, data = df[, c("inclusion_weight", intersect(names(df), auxiliary_vars))])
+  selected_subsample <- samplecube(balancing_matrix, df$inclusion_weight, order = 2, method = 2, comment = verbose) == 1
+  # df$inclusion_weight <- getPips(df[[weight_var]], n) # df[[weight_var]] * n/sum(df[[weight_var]])  
+  # selected_subsample <- cube(df$inclusion_weight, df[, c("inclusion_weight", auxiliary_vars)])
   
-  print(paste0("Size subsample: ", length(selected_subsample), "; ", round(mean(df$gcs_support[selected_subsample], )), "% support GCS in subsample"))
+  print(paste0(c, ". Size subsample: ", sum(selected_subsample), "; ", round(mean(df$gcs_support[selected_subsample], )), "% support GCS in subsample"))
+  if (verbose | (return == "representativeness")) print(round(colMeans(balancing_matrix[selected_subsample, ]), 2))
   if (return == "sample") return(df[selected_subsample,])
   else if (return == "export") {
-    write.csv2(df[selected_subsample,], paste0("../hidden/subsample_n", n, ".csv"))
+    write.csv2(df[selected_subsample,], paste0("../hidden/subsample_", c, "_", n, ".csv"))
+    print(round(colMeans(balancing_matrix[selected_subsample, ]), 2))
     if (verbose) return(selected_subsample)
   }
   else if (return == "rest") return(df[setdiff(1:nrow(df), selected_subsample)])
   else if (return == "mail") return(df$interview[selected_subsample])
   else if (return == "n") return(df$n[selected_subsample])
+  else if (return == "representativeness") return(colMeans(balancing_matrix[selected_subsample, ]))
   else return(selected_subsample)
 }
 
-select_subsample(n = 75, c = "US", return = "export") # True: 49%
-select_subsample(n = 87, c = "GB", return = "export") # True: 58%
-temp <- select_subsample(n = 5000, c = "FR", weight_var = "weight_gcs", return = "export") # True: 65%
+for (c in c("US", "GB", "FR")) select_subsample(n = 20, c = c, return = "export")
+for (c in c("US", "GB", "FR")) select_subsample(n = 200, c = c, return = "export")
+for (c in c("US", "GB", "FR")) select_subsample(n = 75, c = c, return = "export")
+for (c in c("US", "GB", "FR")) select_subsample(n = 20, c = c, return = "representativeness")
 
 
 # Sandbox
@@ -40,11 +49,9 @@ select_subsample(n = 75, c = "FR", weight_var = "weight_gcs", interest_vars = c(
 length(cube(df$inclusion_weight, as.matrix(df[, c("inclusion_weight", interest_vars)])))
 wtd.mean(df$gcs_support, df$weight_vote_gcs) # 88%
 mean(df$gcs_support) # 80%
-# TODO! add gcs_understood to interest_vars
 
-sum(UPpivotal(df$inclusion_weight) >= 1)
-sum(df$inclusion_weight)
 
+##### Export ID data #####
 # all_id <- read.csv("../Adrien's/all_id.csv")
 # all_id <- merge(all[,!names(all) %in% c("interview", "country")], all_id, by = "n")
 # all_id$volunteer <- grepl("@", all_id$interview)
@@ -61,4 +68,12 @@ sum(df$inclusion_weight)
 #           paste0("../Adrien's/", c, "_full.rds"))
 # } 
 
-saveRDS(df[, !names(df) %in% "interview"], "../hidden/GB_anon.rds")
+# saveRDS(df[, !names(df) %in% "interview"], "../hidden/GB_anon.rds")
+
+
+##### Random order #####
+random_order <- matrix(NA, ncol = 13, nrow = 500)
+random_order[,1] <- c("P", "C")[sample(2, 500, replace = T)]
+for (i in 1:500) random_order[i, 1:6 + 1 + 6*(random_order[i,1] == "C")] <- sample(1:6)
+write.csv(random_order, "../data_ext/random_order.csv")
+# for (i in 1:500) print(paste(c(c("P", "C")[sample(2,1)], sample(1:6)), collapse = ' '))
