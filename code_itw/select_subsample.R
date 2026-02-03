@@ -91,8 +91,10 @@ mean(df$gcs_support) # 80%
 
 
 ##### Random order #####
-random_order <- matrix(NA, ncol = 13, nrow = 500)
+set.seed(6)
+random_order <- matrix(NA, ncol = 21, nrow = 500)
 random_order[,1] <- c("P", "C")[sample(2, 500, replace = T)]
-for (i in 1:500) random_order[i, 1:6 + 1 + 6*(random_order[i,1] == "C")] <- sample(1:6)
+for (i in 1:500) random_order[i, 2:11] <- random_order[i, 12:21] <- sample(1:10)
 write.csv(random_order, "../data_ext/random_order.csv")
+# describe(random_order[1:300,1])
 # for (i in 1:500) print(paste(c(c("P", "C")[sample(2,1)], sample(1:6)), collapse = ' '))
