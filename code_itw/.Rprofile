@@ -45,11 +45,11 @@ package <- function(p, version = NULL, remove = FALSE, github = '') {
 #' #'
 #' #' chooseCRANmirror(ind = 1)
 #' set.seed(42)
-#' package('tidyverse')
-#' package("dplyr")
-#' package("tidyr") # replace_na, no.na, decrit
+package('tidyverse')
+package("dplyr")
+package("tidyr") # replace_na, no.na, decrit
 #' package("beepr") # beep() makes sound
-#' package("openxlsx") # read.xlsx
+package("openxlsx") # read.xlsx
 #' if (!is.element("plotly", installed.packages()[,1])) install.packages("https://github.com/plotly/plotly.R/archive/refs/tags/v4.9.4.1.tar.gz", repos=NULL) else library(plotly) # If bug change .libPaths() (to /Program Files instead of Users/.../AppData)
 #' package("plotly") # used in barres; in case of bug due to kaleido: "pip install kaleido" in the python console. À PA, version 4.10.0
 #' package("stargazer") # To fix the bug with is.na() on R 4.2, run the code below from https://gist.github.com/alexeyknorre/b0780836f4cec04d41a863a683f91b53
@@ -399,18 +399,18 @@ package("BalancedSampling") # cube
 #' #'   else if (return %in% c("levels", "labels")) return(levels)
 #' #'   else if (return == "values") return(values)
 #' #' }
-#' no.na <- function(vec, rep = "", rep_num = rep, num_as_char = T) {
-#'   if (missing(rep) & missing(rep_num)) rep_num <- 0
-#'   if (is.numeric(rep)) if (is.character(vec)) rep <- as.character(rep) else num_as_char <- FALSE
-#'   if (any(class(vec) %in% "data.frame")) return(as.data.frame(lapply(vec, no.na, rep, rep_num, num_as_char)))
-#'   else {
-#'     if (num_as_char) {
-#'       if (is.numeric(vec) | is.logical(vec)) return(replace_na(as.character(as.vector(vec)), rep))
-#'       else return(replace_na(as.vector(vec), rep))
-#'     } else if (is.logical(c(vec, rep_num)) | is.numeric(c(vec, rep_num))) { replace_na(as.vector(vec), rep_num)
-#'     } else return(vec)
-#'   }
-#' }
+no.na <- function(vec, rep = "", rep_num = rep, num_as_char = T) {
+  if (missing(rep) & missing(rep_num)) rep_num <- 0
+  if (is.numeric(rep)) if (is.character(vec)) rep <- as.character(rep) else num_as_char <- FALSE
+  if (any(class(vec) %in% "data.frame")) return(as.data.frame(lapply(vec, no.na, rep, rep_num, num_as_char)))
+  else {
+    if (num_as_char) {
+      if (is.numeric(vec) | is.logical(vec)) return(replace_na(as.character(as.vector(vec)), rep))
+      else return(replace_na(as.vector(vec), rep))
+    } else if (is.logical(c(vec, rep_num)) | is.numeric(c(vec, rep_num))) { replace_na(as.vector(vec), rep_num)
+    } else return(vec)
+  }
+}
 #' decrit_old <- function(variable, data = e, miss = TRUE, weights = NULL, numbers = FALSE, which = NULL, weight = T) { # TODO!: allow for boolean weights
 #'   # if (!missing(data)) variable <- data[[variable]]
 #'   if (is.character(variable) & length(variable)==1) variable <- data[[variable]]
