@@ -60,7 +60,7 @@ package("openxlsx") # read.xlsx
 package("Hmisc") # describe, decrit
 #' package("quanteda") # stopwords for wordcloud
 #' package("rpart.plot") # Regression trees
-#' package("memisc")
+package("memisc") # as.item
 #' setMethod("include.missings","ANY",function(x,mark="*") x) # to fix bug in include.missings(1); include.missings("a") until the new version of memisc is released (post 0.99.31.8.2)
 #' library(magick) # image_write
 #' package("knitr") # plot_crop, representativeness_table
@@ -211,13 +211,13 @@ package("BalancedSampling") # cube
 #' # package("wbstats") # World Bank
 #' # package("rootSolve")
 #' #' # Previously: One needs a *patched* version of memisc version 0.99.22 (not a newer), hence the code below (cf. this issue: https://github.com/melff/memisc/issues/62)
-#' # if (!is.element("memisc", installed.packages()[,1])) {
-#' #   install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL)
-#' # } else if (packageVersion("memisc")!="0.99.22") {
-#' #   detach("package:memisc", unload = TRUE)
-#' #   remove.packages("memisc")
-#' #   install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL)
-#' # } else library(memisc)
+# if (!is.element("memisc", installed.packages()[,1])) {
+#   install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL)
+# } else if (packageVersion("memisc")!="0.99.22") {
+#   detach("package:memisc", unload = TRUE)
+#   remove.packages("memisc")
+#   install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL)
+# } else library(memisc)
 #' # package("gpinter", github = "thomasblanchet") # Sys.getenv("GITHUB_PAT") was ""
 #' #' # If this doesn't work (runs infinitely). Download the archive and from the Terminal run `R CMD INSTALL memisc_0.99.22.tar.gz  '
 #' #' # The following will not work: package("memisc", version = "0.99.22") # in case of bug (endless loop), copy/paste folder /memisc in library and: install.packages("memisc", method = "win.binary") OR install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL). If it still doesn't work, run library(utils); install.packages("https://github.com/melff/memisc/files/9690453/memisc_0.99.22.tar.gz", repos=NULL) from R (not RStudio)
@@ -268,14 +268,14 @@ package("BalancedSampling") # cube
 #' #'   return(ci) }
 #' #' match.nona <- function(v, t) {return(as.vector(na.omit(match(v, t))))} # returns match(v, t) purged from NAs, i.e. the (first) position of v elements (that are in t) in t (screened/ordered from v), cf. below
 #' #' # so df$foo[match.nona(db$bar, df$bar)] <- db$foo[db$bar %in% df$bar] replaces elements of df$foo such that df$bar is in db$bar by corresponding db$foo
-#' Label <- function(var, df = e, multi = FALSE) {
-#'   if (multi) sapply(var, function(v) Label(v, df = df, multi = FALSE))
-#'   else {
-#'     if (length(var) == 1 & nrow(df) > 1) var <- df[[var]]
-#'     if (length(memisc::annotation(var))==1) { memisc::annotation(var)[1] }
-#'     else { label(var)  }
-#'   }
-#' }
+Label <- function(var, df = e, multi = FALSE) {
+  if (multi) sapply(var, function(v) Label(v, df = df, multi = FALSE))
+  else {
+    if (length(var) == 1 & nrow(df) > 1) var <- df[[var]]
+    if (length(memisc::annotation(var))==1) { memisc::annotation(var)[1] }
+    else { label(var)  }
+  }
+}
 #' break_string <- function(string, max_length = 57, soft_max_length = T, sep = "<br>", max_lines = 3) {
 #'   # used in heatmap_multiple
 #'   n <- nchar(string)
@@ -440,55 +440,55 @@ no.na <- function(vec, rep = "", rep_num = rep, num_as_char = T) {
 #'       else describe(variable[no.na(variable)!="" & !is.missing(variable)], weights = weights[no.na(variable)!="" & !is.missing(variable)], descript=paste(length(which(is.missing(variable))), "missing obs.", Label(variable)))
 #'     } else describe(variable[no.na(variable)!=""], weights = weights[no.na(variable)!=""])  }
 #' }
-#' decrit <- function(variable, data = e, miss = TRUE, weights = NULL, numbers = FALSE, which = NULL, weight = T) { # TODO!: allow for boolean weights
-#'   # if (!missing(data)) variable <- data[[variable]]
-#'   if (is.character(variable) & length(variable)==1) variable <- data[[variable]]
-#'   if (!missing(which)) variable <- variable[which]
-#'   if (weight) {
-#'     # if (length(variable) > 1) warning("Field 'variable' is a vector instead of a character, weight will not be used.")
-#'     if (missing(weights)) weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else {
-#'     if (!missing(which)) weights <- weights[which]
-#'     if (length(weights) != length(variable)) {
-#'       warning("Lengths of weight and variable differ, non-weighted results are provided")
-#'       weights <- NULL
-#'     } }
-#'   
-#'   nb_numeric_levels <- length(which(!is.na(suppressWarnings(as.numeric(levels(as.factor(variable)))))))
-#'   is_memisc <- length(memisc::annotation(variable)) > 0
-#'   
-#'   non_missing <- no.na(variable, rep = "") != ""
-#'   if (!miss & numbers & is_memisc) {
-#'     non_missing <- no.na(variable, rep = "") != "" & !is.missing(variable) # TODO? useful?
-#'     lab <- paste(length(which(is.missing(variable))), "missing obs.", Label(variable))
-#'   } else if (miss & !numbers & is_memisc) {
-#'     lab <- Label(variable)
-#'     if (nb_numeric_levels > 10) {
-#'       non_missing <- no.na(variable, rep = "") != "" & !is.na(variable)
-#'     } else {
-#'       non_missing <- no.na(include.missings(variable), rep = "") != "" & !is.na(variable) }
-#'   } else if (numbers & !is_memisc) {
-#'     lab <- NULL
-#'   } else {
-#'     lab <- Label(variable)
-#'   }
-#'   var <- variable[non_missing]
-#'   wgt <- weights[non_missing]
-#'   
-#'   if (!numbers & is_memisc) {
-#'     if (miss) {
-#'       if (nb_numeric_levels > 10) var <- include.missings(var) # Here and line below, was include.missings(variable) (21/03/25)
-#'       else var <- as.factor(include.missings(var)) # older: Here it was var <- as.factor(include.missings(variable)[no.na(include.missings(variable))!="" & !is.na(variable)]), I think it's equivalent to what we do here: as.factor(include.missings(variable[...]))
-#'     } else {
-#'       if (nb_numeric_levels == 0) var <- as.factor(var)
-#'       else var <- as.numeric(as.vector(var))
-#'     }
-#'   }
-#'   output <- capture.output(describe(var, weights = wgt, descript = lab))
-#'   output_cut <- !any(grepl("Proportion", output)) & !any(grepl("Mean", output)) #& any(grepl("lowest", output))
-#'   # output_cut <- F
-#'   if (output_cut) describe(var, weights = wgt, descript = lab, listunique = 25) # Hmisc might soon include Proportion when listunique is used, cf. https://github.com/harrelfe/Hmisc/issues/193#issuecomment-2738292554
-#'   else describe(var, weights = wgt, descript = lab)
-#' }
+decrit <- function(variable, data = e, miss = TRUE, weights = NULL, numbers = FALSE, which = NULL, weight = T) { # TODO!: allow for boolean weights
+  # if (!missing(data)) variable <- data[[variable]]
+  if (is.character(variable) & length(variable)==1) variable <- data[[variable]]
+  if (!missing(which)) variable <- variable[which]
+  if (weight) {
+    # if (length(variable) > 1) warning("Field 'variable' is a vector instead of a character, weight will not be used.")
+    if (missing(weights)) weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else {
+    if (!missing(which)) weights <- weights[which]
+    if (length(weights) != length(variable)) {
+      warning("Lengths of weight and variable differ, non-weighted results are provided")
+      weights <- NULL
+    } }
+  
+  nb_numeric_levels <- length(which(!is.na(suppressWarnings(as.numeric(levels(as.factor(variable)))))))
+  is_memisc <- length(memisc::annotation(variable)) > 0
+  
+  non_missing <- no.na(variable, rep = "") != ""
+  if (!miss & numbers & is_memisc) {
+    non_missing <- no.na(variable, rep = "") != "" & !is.missing(variable) # TODO? useful?
+    lab <- paste(length(which(is.missing(variable))), "missing obs.", Label(variable))
+  } else if (miss & !numbers & is_memisc) {
+    lab <- Label(variable)
+    if (nb_numeric_levels > 10) {
+      non_missing <- no.na(variable, rep = "") != "" & !is.na(variable)
+    } else {
+      non_missing <- no.na(include.missings(variable), rep = "") != "" & !is.na(variable) }
+  } else if (numbers & !is_memisc) {
+    lab <- NULL
+  } else {
+    lab <- Label(variable)
+  }
+  var <- variable[non_missing]
+  wgt <- weights[non_missing]
+  
+  if (!numbers & is_memisc) {
+    if (miss) {
+      if (nb_numeric_levels > 10) var <- include.missings(var) # Here and line below, was include.missings(variable) (21/03/25)
+      else var <- as.factor(include.missings(var)) # older: Here it was var <- as.factor(include.missings(variable)[no.na(include.missings(variable))!="" & !is.na(variable)]), I think it's equivalent to what we do here: as.factor(include.missings(variable[...]))
+    } else {
+      if (nb_numeric_levels == 0) var <- as.factor(var)
+      else var <- as.numeric(as.vector(var))
+    }
+  }
+  output <- capture.output(describe(var, weights = wgt, descript = lab))
+  output_cut <- !any(grepl("Proportion", output)) & !any(grepl("Mean", output)) #& any(grepl("lowest", output))
+  # output_cut <- F
+  if (output_cut) describe(var, weights = wgt, descript = lab, listunique = 25) # Hmisc might soon include Proportion when listunique is used, cf. https://github.com/harrelfe/Hmisc/issues/193#issuecomment-2738292554
+  else describe(var, weights = wgt, descript = lab)
+}
 #' # Levels_data <- function(var) { # I replaced it by Levels, haven't checked if it may create bugs
 #' #   if (setequal(levels(var), c(T, F))) levels <- c(T) # before: not this line
 #' #   else if (is.null(annotation(var))) levels <- levels(var)
