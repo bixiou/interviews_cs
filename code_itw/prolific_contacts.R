@@ -118,8 +118,8 @@ convert <- function(e) {
   e <- create_item("income", new_var = "income_quartile", labels = c("Q1" = 1, "Q2" = 2, "Q3" = 3, "Q4" = 4, "PNR" = 0), values = c("100|200|250", "300|400|500", "600|700|750", "800|900", "not"), grep = T, missing.values = c("PNR"), df = e)  
   e <- create_item("income", new_var = "income_decile", labels = c("d1" = 1, "d2" = 2, "d3" = 3, "d4" = 4, "d5" = 5, "d6" = 6, "d7" = 7, "d8" = 8, "d9" = 9, "d10" = 10, "PNR" = 0), values = c("less", "100 and", "201|300", "301", "401", "501", "601", "701|800", "801", "more", "not"), grep = T, missing.values = c("PNR"), df = e)  
 
-  e$uc <- 1 + .5*pmax(0, e$hh_size - e$Nb_children__14) + .3*e$Nb_children__14
-  label(e$uc) <- "uc: Consumption units (1 + .5*pmax(0, hh_size - Nb_children__14) + .3*Nb_children__14)."
+  e$uc <- .5 + .5*pmax(0, e$hh_size - e$Nb_children__14) + .3*e$Nb_children__14
+  label(e$uc) <- "uc: Consumption units (.5 + .5*pmax(0, hh_size - Nb_children__14) + .3*Nb_children__14)."
  
   # if (country == "GB") e$urbanity[e$urbanity %in% c(1,3)] <- ifelse(e$urbanity[e$urbanity %in% c(1,3)] %in% 1, 3, 1) # Correcting a mistake in Qualtrics encoding
   # if ("urbanity" %in% names(e)) {
