@@ -37,7 +37,7 @@ package <- function(p, version = NULL, remove = FALSE, github = '') {
 #' # package("janitor") # heatmaps
 #' # package("ggdist") # nice confidence intervals in regression plots
 #' 
-#' # package("qualtRics") # https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
+package("qualtRics") # https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
 #' # For Antoine's account, API is not enabled (cf. Account Settings > Qualtrics ID > API or https://lse.eu.qualtrics.com/Q/QualtricsIdsSection/IdsSection) so we cannot retrieve the data directly using qualtRics.
 #' # qualtrics_api_credentials(api_key = "<YOUR-QUALTRICS_API_KEY>", base_url = "https://lse.eu.qualtrics.com/", install = TRUE)
 #' # source("qualtrics_credential.R")
@@ -90,6 +90,7 @@ package("memisc") # as.item
 #' # package("weights") # wtd.t.test
 #' # package("stringr") # str_trim, parse_question
 #' # package("purrr") # %||%, parse_question
+package("sampling") # samplecube, inclusionprobabilities
 package("BalancedSampling") # cube
 #' 
 #' #' package("plyr")
@@ -115,7 +116,7 @@ package("BalancedSampling") # cube
 #' #' package("pastecs")
 #' #' package("lsr")
 #' #' package("ggplot2")
-#' #' package("survey")
+package("survey")
 #' #' Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "C:/RTools42/usr/bin", sep = .Platform$path.sep))
 #' #' Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "/home/adrien/anaconda3/bin", sep = .Platform$path.sep))
 #' #' Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "C:/Users/fabre/Anaconda3/pkgs/plotly-orca-1.3.1-1/orca_app", sep = .Platform$path.sep)) # to correct bug orca, add folder of orca.exe
@@ -268,10 +269,10 @@ package("BalancedSampling") # cube
 #' #'   return(ci) }
 #' #' match.nona <- function(v, t) {return(as.vector(na.omit(match(v, t))))} # returns match(v, t) purged from NAs, i.e. the (first) position of v elements (that are in t) in t (screened/ordered from v), cf. below
 #' #' # so df$foo[match.nona(db$bar, df$bar)] <- db$foo[db$bar %in% df$bar] replaces elements of df$foo such that df$bar is in db$bar by corresponding db$foo
-Label <- function(var, df = e, multi = FALSE) {
+Label <- function(var, df = if (exists("e")) e, multi = FALSE) {
   if (multi) sapply(var, function(v) Label(v, df = df, multi = FALSE))
   else {
-    if (length(var) == 1 & nrow(df) > 1) var <- df[[var]]
+    if (length(var) == 1 && nrow(df) > 1) var <- df[[var]]
     if (length(memisc::annotation(var))==1) { memisc::annotation(var)[1] }
     else { label(var)  }
   }
@@ -440,7 +441,7 @@ no.na <- function(vec, rep = "", rep_num = rep, num_as_char = T) {
 #'       else describe(variable[no.na(variable)!="" & !is.missing(variable)], weights = weights[no.na(variable)!="" & !is.missing(variable)], descript=paste(length(which(is.missing(variable))), "missing obs.", Label(variable)))
 #'     } else describe(variable[no.na(variable)!=""], weights = weights[no.na(variable)!=""])  }
 #' }
-decrit <- function(variable, data = e, miss = TRUE, weights = NULL, numbers = FALSE, which = NULL, weight = T) { # TODO!: allow for boolean weights
+decrit <- function(variable, data = if (exists("e")) e, miss = TRUE, weights = NULL, numbers = FALSE, which = NULL, weight = T) { # TODO!: allow for boolean weights
   # if (!missing(data)) variable <- data[[variable]]
   if (is.character(variable) & length(variable)==1) variable <- data[[variable]]
   if (!missing(which)) variable <- variable[which]
@@ -900,36 +901,36 @@ decrit <- function(variable, data = e, miss = TRUE, weights = NULL, numbers = FA
 #' #' #'   decote <- (ir < seuil_decote) * 0.75 * (seuil_decote - ir)
 #' #' #'   return(pmax((ir-decote),0)) # vrai calcul
 #' #' #' }
-#' representativity_index <- function(weights, digits = 3) { return(round(sum(weights)^2/(length(weights)*sum(weights^2)), 3)) }
-#' 
-#' # If bug, detach memisc (namespace content) and plotly (namespace config); and run qualtrics_credential.R
-#' # surveys are assumed to be name [country]_survey
-#' export_quotas <- function(waves = countries, order_cols = c("country", "Gender", "Age", "Education", "Urbanity", "Income", "Region", "Race"), gdoc = "https://docs.google.com/spreadsheets/d/1S8QObjDtPzqKHTB-pKjEAT1qXiRfCLNpK1pk2yIeJ3k/", domain = "wumarketing.eu") {
-#'   quotas_limit_current <- quotas_count <- data.frame()
-#'   survey_list <- all_surveys()
-#'   for (country in waves) {
-#'     api_response <- GET(paste0("https://", domain, ".qualtrics.com/API/v3/survey-definitions/", survey_list$id[survey_list$name == paste0(country, "_survey")], "/quotas"),
-#'                         query = list(pageSize = 50), # accept_json(),
-#'                         add_headers('x-api-token' = Sys.getenv("QUALTRICS_API_KEY")))
-#'     api_response <- fromJSON(content(api_response, as = "text", encoding = "UTF-8"), flatten = TRUE)$result$elements
-#'     if (nrow(quotas_limit_current) > 0) quotas_limit_current <- merge(quotas_limit_current, as.data.frame(t(c("country" = country, setNames(api_response$Occurrences, api_response$Name)))), all = T)
-#'     else quotas_limit_current <- as.data.frame(t(c("country" = country, setNames(api_response$Occurrences, api_response$Name))))
-#'     if (nrow(quotas_count) > 0) quotas_count <- merge(quotas_count, as.data.frame(t(c("country" = country, setNames(api_response$Count, api_response$Name)))), all = T)
-#'     else quotas_count <- as.data.frame(t(c("country" = country, setNames(api_response$Count, api_response$Name))))
-#'   }
-#'   row.names(quotas_limit_current) <- row.names(quotas_count) <- waves[order(waves)]
-#'   new_order <- c()
-#'   for (i in order_cols) new_order <- c(new_order, sort(names(quotas_count))[grepl(i, sort(names(quotas_count)))])
-#'   new_order <- c(new_order, sort(names(quotas_count))[!multi_grepl(order_cols, sort(names(quotas_count)))])
-#'   quotas_limit_current <- quotas_limit_current[waves, new_order]
-#'   quotas_count <- quotas_count[waves, new_order]
-#'   # quotas_limit_current <- quotas_limit_current[waves, order(names(quotas_limit_current))]
-#'   # quotas_count <- quotas_count[waves, order(names(quotas_count))]
-#'   # quotas_limit_current <- quotas_limit_current[, colSums(quotas_limit_current != 0, na.rm = T) > 0]
-#'   # quotas_count <- quotas_count[, colSums(quotas_count != 0, na.rm = T) > 0]
-#'   quotas_limit_current %>%  write_sheet(ss = gs4_get(gdoc), sheet = "quotas_limit_current")
-#'   quotas_count %>%  write_sheet(ss = gs4_get(gdoc), sheet = "quotas_count")
-#' }
+representativity_index <- function(weights, digits = 3) { return(round(sum(weights)^2/(length(weights)*sum(weights^2)), 3)) }
+
+# If bug, detach memisc (namespace content) and plotly (namespace config); and run qualtrics_credential.R
+# surveys are assumed to be name [country]_survey
+export_quotas <- function(waves = countries, order_cols = c("country", "Gender", "Age", "Education", "Urbanity", "Income", "Region", "Race"), gdoc = "https://docs.google.com/spreadsheets/d/1S8QObjDtPzqKHTB-pKjEAT1qXiRfCLNpK1pk2yIeJ3k/", domain = "wumarketing.eu") {
+  quotas_limit_current <- quotas_count <- data.frame()
+  survey_list <- all_surveys()
+  for (country in waves) {
+    api_response <- GET(paste0("https://", domain, ".qualtrics.com/API/v3/survey-definitions/", survey_list$id[survey_list$name == paste0(country, "_survey")], "/quotas"),
+                        query = list(pageSize = 50), # accept_json(),
+                        add_headers('x-api-token' = Sys.getenv("QUALTRICS_API_KEY")))
+    api_response <- fromJSON(content(api_response, as = "text", encoding = "UTF-8"), flatten = TRUE)$result$elements
+    if (nrow(quotas_limit_current) > 0) quotas_limit_current <- merge(quotas_limit_current, as.data.frame(t(c("country" = country, setNames(api_response$Occurrences, api_response$Name)))), all = T)
+    else quotas_limit_current <- as.data.frame(t(c("country" = country, setNames(api_response$Occurrences, api_response$Name))))
+    if (nrow(quotas_count) > 0) quotas_count <- merge(quotas_count, as.data.frame(t(c("country" = country, setNames(api_response$Count, api_response$Name)))), all = T)
+    else quotas_count <- as.data.frame(t(c("country" = country, setNames(api_response$Count, api_response$Name))))
+  }
+  row.names(quotas_limit_current) <- row.names(quotas_count) <- waves[order(waves)]
+  new_order <- c()
+  for (i in order_cols) new_order <- c(new_order, sort(names(quotas_count))[grepl(i, sort(names(quotas_count)))])
+  new_order <- c(new_order, sort(names(quotas_count))[!multi_grepl(order_cols, sort(names(quotas_count)))])
+  quotas_limit_current <- quotas_limit_current[waves, new_order]
+  quotas_count <- quotas_count[waves, new_order]
+  # quotas_limit_current <- quotas_limit_current[waves, order(names(quotas_limit_current))]
+  # quotas_count <- quotas_count[waves, order(names(quotas_count))]
+  # quotas_limit_current <- quotas_limit_current[, colSums(quotas_limit_current != 0, na.rm = T) > 0]
+  # quotas_count <- quotas_count[, colSums(quotas_count != 0, na.rm = T) > 0]
+  quotas_limit_current %>%  write_sheet(ss = gs4_get(gdoc), sheet = "quotas_limit_current")
+  quotas_count %>%  write_sheet(ss = gs4_get(gdoc), sheet = "quotas_count")
+}
 #' #' #'
 #' #' #'
 #' #' #' ##### Graphiques #####
