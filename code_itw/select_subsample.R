@@ -214,7 +214,7 @@ pop_freq[[c]]$gcs_understood <- (c(.7565714, 1-.7565714) - c(sum(done$gcs_unders
 
 for (v in names(pop_freq[[c]])) pop_freq[[c]][[v]] <- pmax(pop_freq[[c]][[v]], 0)
 
-# Then I select 110 people among the volunteers from the new surveys to make the overall sample representative.
+# Then I select 80 people among the volunteers from the new surveys to make the overall sample representative.
 FRa <- readRDS("../hidden/FRa_full.rds")
 for (v in c("education_quota", "income_quartile", "region", "urbanity")) FRa[[paste0(v, "_factor")]] <- as.factor(FRa[[v]])
 FRa$income_factor <- FRa$income_quartile_factor
@@ -235,4 +235,53 @@ df <- select_subsample(n = 80, c = "FRa", weight_var = "weight_gcs", return = "s
 write.xlsx(df[,export_vars], "../hidden/FRa_80.xlsx")
 wtd.mean(FRa$gcs_support, FRa$weight_vote_gcs) # 61%
 mean(FRa$gcs_support) # 68%
+
+
+##### March 22 (final survey data) #####
+# I adjust the population frequencies to deduct the 42 people who have already been interviewed or booked an interview.
+done <- read.xlsx("../hidden/FR.xlsx", sheet = "Survey")
+done <- done[done$booked %in% 1,]
+c <- "FR"
+N <- 100 # objective
+pop_freq[[c]]$gender <- (c("Femme" = qs[c,"women"], 0.001, "Homme" = qs[c,"men"])/1000 - c(sum(!done$man), 0, sum(done$man))/N)/(1 - nrow(done)/N)
+pop_freq[[c]]$income_quartile <- (rep(.25, 4) - c(sum(done$income_factor %in% "Q1"), sum(done$income_factor %in% "Q2"), sum(done$income_factor %in% "Q3"), sum(done$income_factor %in% "Q4"))/N)/(1 - nrow(done)/N)
+pop_freq[[c]]$age <- (unlist(qs[c, c("18-24", "25-34", "35-49", "50-64", "65+")]/1000) - c(sum(done$age_factor %in% "18-24"), sum(done$age_factor %in% "25-34"), sum(done$age_factor %in% "35-49"), sum(done$age_factor %in% "50-64"), sum(done$age_factor %in% "65+"))/N)/(1 - nrow(done)/N)
+pop_freq[[c]]$education_quota <- (unlist(c(qs[c, c("Below.upper.secondary.25-64.0-2", "Upper.secondary.25-64.3", "Above.Upper.secondary.25-64.4-8")]/1000, "Not 25-64" = sum(unlist(qs[c, c("18-24", "65+")]/1000)))) - 
+                                    c(sum(grepl("Below", done$education_factor) & grepl("34|35|50", done$age_factor)), sum(grepl("Upper", done$education_factor) & grepl("34|35|50", done$age_factor)), sum(grepl("Above", done$education_factor) & grepl("34|35|50", done$age_factor)), sum(!grepl("34|35|50", done$age_factor)))/N)/(1 - nrow(done)/N) 
+pop_freq[[c]]$urbanity <- (unlist(qs[c, c("Cities", "Towns.and.suburbs", "Rural")]/1000) - c(sum(done$urbanity_factor %in% "Cities"), sum(done$urbanity_factor %in% "Towns and suburbs"), sum(done$urbanity_factor %in% "Rural"))/N)/(1 - sum(!is.na(done$region_factor))/N)
+pop_freq[[c]]$region <- (unlist(qs[c, paste0("Region.", 1:5)]/1000) - c(sum(done$region_factor %in% 1), sum(done$region_factor %in% 2), sum(done$region_factor %in% 3), sum(done$region_factor %in% 4), sum(done$region_factor %in% 5))/N)/(1 - sum(!is.na(done$region_factor))/N)
+# pop_freq[[c]]$employment_18_64 <- (unlist(c(c("Inactive" = qs[c, "Inactivity"], "Unemployed" = qs[c, "Unemployment"]*(1000-qs[c, "Inactivity"])/1000, "Employed" =  1000-qs[c, "Inactivity"]-qs[c, "Unemployment"]*(1000-qs[c, "Inactivity"])/1000)*(1000-qs[c, c("65+")])/1000, "65+" = qs[c, c("65+")])/1000) - c(sum(!done$man), 0, sum(done$man))/N)/(1 - nrow(done)/N)
+# pop_freq[[c]]$vote <- unlist(c(c("Left" = qs[c, "Left"], "Center-right or Right" = qs[c, "Center-right.or.Right"], "Far right" = qs[c, "Far.right"])*(1000-qs[c, "Abstention"])/sum(qs[c, c("Left", "Center-right.or.Right", "Far.right")], na.rm = T), "Abstention" = qs[c, "Abstention"])/1000) # We exclude Other in this variant
+pop_freq[[c]]$vote <- (unlist(c("Left" = qs[c, "Left"], "Center-right or Right" = qs[c, "Center-right.or.Right"], "Far right" = qs[c, "Far.right"], "Non-voter, PNR or Other" = sum(qs[c, "Abstention"], qs[c, "Vote_other"]))/1000) - c(sum(grepl("Left", done$vote_factor)), sum(grepl("Center", done$vote_factor)), sum(grepl("Far right", done$vote_factor)), sum(grepl("Non-voter", done$vote_factor)))/N)/(1 - sum(!is.na(done$vote_factor))/N)
+
+pop_freq[[c]]$gcs_support <- (c(.6222735, 1-.6222735) - c(sum(done$gcs_support %in% "Yes"), sum(done$gcs_support %in% "No"))/N)/(1 - nrow(done)/N)
+pop_freq[[c]]$gcs_understood <- (c(.7565714, 1-.7565714) - c(sum(done$gcs_understood), sum(!done$gcs_understood))/N)/(1 - nrow(done)/N)
+
+for (v in names(pop_freq[[c]])) pop_freq[[c]][[v]] <- pmax(pop_freq[[c]][[v]], 1e-5)
+
+# Then I select 300 people among the uncontacted volunteers from the new surveys to make the overall sample representative.
+FRa <- readRDS("../hidden/FRa_full.rds")
+for (v in c("education_quota", "income_quartile", "region", "urbanity")) FRa[[paste0(v, "_factor")]] <- as.factor(FRa[[v]])
+FRa$income_factor <- FRa$income_quartile_factor
+FRa$mail <- FRa$interview
+FRa$mail[!grepl("@", FRa$interview)] <- FRa$budget_mail[!grepl("@", FRa$interview)]
+FRa$empty <- ""
+FRa$weight <- weighting(FRa, "FR", trim = FALSE)
+FRa$weight_gcs <- weighting(FRa, "FR", variant = "gcs", trim = FALSE)
+FRa$weight_vote <- weighting(FRa, "FR", variant = "vote", trim = FALSE)
+FRa$weight_vote_gcs <- weighting(FRa, "FR", variant = "vote_gcs", trim = FALSE)
+FRa$weight_all_gcs <- weighting(FRa, "FR", variant = "all_gcs", trim = FALSE)
+saveRDS(FRa, "../hidden/FRa_full.rds")
+
+already_contacted <- read.csv2("../hidden/subsample_FRa_80.csv")
+FRa <- FRa[!FRa$n %in% already_contacted$n,]
+select_subsample(n = 300, c = "FRa", weight_var = "weight_gcs", return = "export")
+
+export_vars <- c("n", "budget_mail", "interview", "empty", "gcs_support", "gcs_understood", "empty", "voted", "vote_original", "group_defended", "income_decile", "millionaire_factor", 
+                 "age_factor", "education", "man", "urbanity_factor", "zipcode", "couple", "uc", "employment_agg", "vote_factor", "income_factor", "region_factor", "empty", "empty", "weight", "weight_vote", "vote_agg", "vote", "empty", "volunteer", "empty")
+df <- select_subsample(n = 300, c = "FRa", weight_var = "weight_gcs", return = "sample")
+write.xlsx(df[,export_vars], "../hidden/FRa_300.xlsx")
+write.csv(df[,c("n", "mail")], "../hidden/FRa_300_mail.csv", row.names = F)
+wtd.mean(FRa$gcs_support, FRa$weight_vote_gcs) # 64%
+mean(FRa$gcs_support) # 69%
 
