@@ -136,7 +136,8 @@ for (c in c("US", "GB")) select_subsample(n = 100, c = c, return = "export")
 select_subsample(n = 75, c = "FR", return = "export")
 select_subsample(n = 50, c = "FR", return = "export")
 for (c in c("US", "GB", "FR")) select_subsample(n = 20, c = c, return = "representativeness")
-select_subsample(n = 100, c = "US", return = "export")
+select_subsample(n = 200, c = "US", return = "export")
+select_subsample(n = 400, c = "US", return = "export")
 
 # Sandbox
 n <- 75 # 250 (based on 40% acceptance rate, 75 for 30 people and 250 for 100)
