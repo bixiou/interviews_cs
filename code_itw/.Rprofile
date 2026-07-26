@@ -58,7 +58,8 @@ package("openxlsx") # read.xlsx
 #' package("corrplot") # heatmap #, github = 'taiyun')#, version = "0.88") # 0.92 installed: is that an issue?
 #' package("xfun") # required by Hmisc, knitr
 package("Hmisc") # describe, decrit
-#' package("quanteda") # stopwords for wordcloud
+package("quanteda") # stopwords for wordcloud
+package("quanteda.textstats") # textstat_frequency
 #' package("rpart.plot") # Regression trees
 package("memisc") # as.item
 #' setMethod("include.missings","ANY",function(x,mark="*") x) # to fix bug in include.missings(1); include.missings("a") until the new version of memisc is released (post 0.99.31.8.2)

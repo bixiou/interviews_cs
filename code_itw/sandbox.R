@@ -16,3 +16,11 @@ rm(emails_US)
 # B2C providers charge ~$0.2/contact and about 1% of those contacted accept the interview (provided it's paid) BUT bounce rate can be high.
 # B2C providers: Experian Marketing Services, Acxiom, InfoUSA, bookyourdata, activecampaign.com, infoglobaldata.com
 # DataToLeads charge $.001/contact, then we need verification cost, then Mailchimp costs ~.01/mail.
+
+
+##### Manage coding #####
+fr <- read.xlsx("../data/FR.xlsx")
+fr <- as.data.frame(t(fr))
+names(fr) <- fr[1,] # q_label
+View(fr)
+textstat_frequency(dfm(tokens(corpus(fr$`0_10`), remove_punct = TRUE)))
