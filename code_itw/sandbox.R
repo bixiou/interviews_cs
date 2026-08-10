@@ -23,4 +23,12 @@ fr <- read.xlsx("../data/FR.xlsx")
 fr <- as.data.frame(t(fr))
 names(fr) <- fr[1,] # q_label
 View(fr)
-textstat_frequency(dfm(tokens(corpus(fr$`0_10`), remove_punct = TRUE)))
+textstat_frequency(dfm(tokens(corpus(fr$`1_8`), remove_punct = TRUE)))
+# 1_4 issues: public services; high taxes; work: far right; pension; immigration; war; purchasing power (inflation); insecurity; nanny state; inequality; ecology; deficit (debt); democracy; other
+# 1_8 foreign: cooperative (cordial, friendly, dialogue, good relations); Russia/Ukraine (Putin); China; U.S. (Trump); EU; independence; firm (strong, be respected); neutral; immigration; war (peace, conflict)
+# 1_6 party_words: extreme; inexisting; center; danger; disappointment; interesting (good ideas); lack ideas; close to the people; out of touch
+
+toks <- tokens(corpus(unlist(fr[,38:58])), remove_punct = TRUE, remove_numbers = TRUE) |> tokens_remove(stopwords("en")) |> tokens_tolower()
+colls <- textstat_collocations(toks, size = 2, min_count = 5)
+colls <- colls[colls$z > 3, ]      # seuil sur le score z (Blaheta & Johnson 2001)
+(freq <- textstat_frequency(dfm(tokens_compound(toks, pattern = colls, concatenator = "_"))))
